@@ -15,9 +15,9 @@
         body {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            align-items: center; /* Centers horizontally */
+            justify-content: center; /* Centers vertically */
+            min-height: 100vh;
             background-color: #ffe4e1;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
@@ -25,17 +25,19 @@
         }
 
         #quiz {
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            justify-content: center;
         }
 
         h1 {
             color: #d02e2e;
-            font-size: 2rem;
-            margin-bottom: 40px;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
             padding: 0 20px;
+            width: 100%;
         }
 
         .btn-container {
@@ -43,8 +45,9 @@
             gap: 20px;
             justify-content: center;
             align-items: center;
+            min-height: 100px;
             width: 100%;
-            height: 50px; /* Keeps initial layout stable */
+            position: relative;
         }
 
         button {
@@ -62,6 +65,7 @@
             background-color: #4caf50;
             color: white;
             transition: transform 0.2s ease-in-out;
+            position: relative;
         }
 
         #noBtn {
@@ -71,41 +75,29 @@
             transition: 0.1s ease-out;
         }
 
-        /* Result Screen Styles */
+        /* Result Screen */
         #result {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            animation: fadeIn 1s ease-in;
+            width: 100%;
         }
 
         .love-text {
             color: #d02e2e;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: bold;
             margin-bottom: 20px;
         }
 
         .couple-img {
-            max-width: 90%;
-            max-height: 60vh;
+            width: 85%;
+            max-width: 400px; /* Limits size on desktop */
             border-radius: 20px;
-            border: 8px solid white;
+            border: 6px solid white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            object-fit: cover;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -121,7 +113,7 @@
 
     <div id="result">
         <div class="love-text">Yay! I love you 😍</div>
-        <img src="danandruby.jpg" alt="Us" class="couple-img">
+        <img src="danandruby.jpeg" alt="Us" class="couple-img">
     </div>
 
     <script>
@@ -132,9 +124,12 @@
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             
-            noBtn.style.position = 'absolute';
+            // On the first "miss", make it absolute so it can jump anywhere
+            if (noBtn.style.position !== 'absolute') {
+                noBtn.style.position = 'absolute';
+            }
             
-            const padding = 60; 
+            const padding = 50;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
@@ -144,13 +139,11 @@
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            // Grow Yes Button
             yesScale += 0.3;
             yesBtn.style.transform = `scale(${yesScale})`;
 
-            // Funny Phrases
             noClicks++;
-            const phrases = ["No", "Rude", "Try again", "Wrong button!", "Nice try", "Nope", "Click YES"];
+            const phrases = ["No", "Rude", "Try again", "Nope!", "Wrong one", "Click Yes!"];
             noBtn.innerText = phrases[noClicks % phrases.length];
         }
 
@@ -158,23 +151,12 @@
             document.getElementById('quiz').style.display = 'none';
             document.getElementById('result').style.display = 'flex';
             document.body.style.backgroundColor = '#ffb6c1';
-            document.body.style.overflow = 'auto'; // Allow scrolling to see the full photo if needed
-
-            // Pro Confetti Burst
-            const count = 200;
-            const defaults = { origin: { y: 0.7 } };
-
-            function fire(particleRatio, opts) {
-              confetti(Object.assign({}, defaults, opts, {
-                particleCount: Math.floor(count * particleRatio)
-              }));
-            }
-
-            fire(0.25, { spread: 26, startVelocity: 55 });
-            fire(0.2, { spread: 60 });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-            fire(0.1, { spread: 120, startVelocity: 45 });
+            
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
         }
     </script>
 </body>
