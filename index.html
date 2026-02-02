@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Will You?</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
-        /* Force everything to center no matter what */
         html, body {
             height: 100%;
             margin: 0;
@@ -29,18 +28,15 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            z-index: 10;
         }
 
         h1 {
             color: #d02e2e;
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 30px;
             padding: 0 10px;
-            width: 100%;
         }
 
-        /* This container keeps the buttons from pushing the text */
         .btn-holder {
             display: flex;
             gap: 20px;
@@ -64,19 +60,17 @@
         #yesBtn {
             background-color: #4caf50;
             color: white;
-            z-index: 100;
             transition: transform 0.1s ease;
         }
 
         #noBtn {
             background-color: #f44336;
             color: white;
-            z-index: 50;
+            transition: 0.1s;
         }
 
-        /* Success Screen */
         #result {
-            display: none; /* Changed to flex in JS */
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -102,14 +96,13 @@
             border: 5px solid white;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            display: block; /* Ensures it renders */
         }
     </style>
 </head>
 <body>
 
     <div id="quiz" class="main-wrapper">
-        <h1 id="question">Will you be my Valentine? ❤️</h1>
+        <h1>Will you be my Valentine? ❤️</h1>
         <div class="btn-holder">
             <button id="yesBtn" onclick="celebrate()">Yes</button>
             <button id="noBtn" onclick="moveButton()" onmouseover="moveButton()">No</button>
@@ -118,19 +111,24 @@
 
     <div id="result">
         <div class="love-text">Yay! I love you 😍</div>
-        <img src="danandruby.jpg" alt="Us" class="couple-img">
+        <img src="danandruby.jpeg" alt="Us" class="couple-img">
     </div>
 
     <script>
         let yesScale = 1;
+        let noClicks = 0;
+        const phrases = ["No", "Rude", "Try again", "Nope!", "Wrong one", "Click Yes!", "Are you sure?", "You can't catch me!"];
 
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
-            // Make it move anywhere on screen
+            // 1. Logic for text change
+            noClicks++;
+            noBtn.innerText = phrases[noClicks % phrases.length];
+
+            // 2. Movement logic
             noBtn.style.position = 'fixed';
-            
             const padding = 50;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
@@ -141,18 +139,16 @@
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            // Grow Yes Button
+            // 3. Growth logic
             yesScale += 0.35;
             yesBtn.style.transform = `scale(${yesScale})`;
         }
 
         function celebrate() {
-            // Hide the quiz, show the result
             document.getElementById('quiz').style.display = 'none';
-            const resultDiv = document.getElementById('result');
-            resultDiv.style.display = 'flex';
+            document.getElementById('result').style.display = 'flex';
 
-            // Confetti
+            // Basic confetti call
             confetti({
                 particleCount: 150,
                 spread: 70,
