@@ -6,128 +6,130 @@
     <title>Will You?</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
+        /* Force everything to center no matter what */
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
+            background-color: #ffe4e1;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; 
         }
 
         body {
             display: flex;
-            flex-direction: column;
-            align-items: center; /* Centers horizontally */
-            justify-content: center; /* Centers vertically */
-            min-height: 100vh;
-            background-color: #ffe4e1;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            justify-content: center;
+            align-items: center;
             text-align: center;
         }
 
-        #quiz {
-            width: 100%;
+        .main-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            z-index: 10;
         }
 
         h1 {
             color: #d02e2e;
             font-size: 1.8rem;
             margin-bottom: 30px;
-            padding: 0 20px;
+            padding: 0 10px;
             width: 100%;
         }
 
-        .btn-container {
+        /* This container keeps the buttons from pushing the text */
+        .btn-holder {
             display: flex;
             gap: 20px;
             justify-content: center;
             align-items: center;
-            min-height: 100px;
+            height: 150px; 
             width: 100%;
             position: relative;
         }
 
         button {
-            padding: 15px 30px;
+            padding: 15px 25px;
             font-size: 1.2rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             touch-action: manipulation;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            z-index: 20;
         }
 
         #yesBtn {
             background-color: #4caf50;
             color: white;
-            transition: transform 0.2s ease-in-out;
-            position: relative;
+            z-index: 100;
+            transition: transform 0.1s ease;
         }
 
         #noBtn {
             background-color: #f44336;
             color: white;
-            position: relative;
-            transition: 0.1s ease-out;
+            z-index: 50;
         }
 
-        /* Result Screen */
+        /* Success Screen */
         #result {
-            display: none;
+            display: none; /* Changed to flex in JS */
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background-color: #ffb6c1;
+            z-index: 1000;
         }
 
         .love-text {
             color: #d02e2e;
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: bold;
             margin-bottom: 20px;
         }
 
         .couple-img {
-            width: 85%;
-            max-width: 400px; /* Limits size on desktop */
-            border-radius: 20px;
-            border: 6px solid white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 80%;
+            max-width: 350px;
+            border: 5px solid white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: block; /* Ensures it renders */
         }
     </style>
 </head>
 <body>
 
-    <div id="quiz">
-        <h1>Will you be my Valentine? ❤️</h1>
-        <div class="btn-container">
+    <div id="quiz" class="main-wrapper">
+        <h1 id="question">Will you be my Valentine? ❤️</h1>
+        <div class="btn-holder">
             <button id="yesBtn" onclick="celebrate()">Yes</button>
-            <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+            <button id="noBtn" onclick="moveButton()" onmouseover="moveButton()">No</button>
         </div>
     </div>
 
     <div id="result">
         <div class="love-text">Yay! I love you 😍</div>
-        <img src="danandruby.jpeg" alt="Us" class="couple-img">
+        <img src="danandruby.jpg" alt="Us" class="couple-img">
     </div>
 
     <script>
         let yesScale = 1;
-        let noClicks = 0;
 
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
-            
-            // On the first "miss", make it absolute so it can jump anywhere
-            if (noBtn.style.position !== 'absolute') {
-                noBtn.style.position = 'absolute';
-            }
+
+            // Make it move anywhere on screen
+            noBtn.style.position = 'fixed';
             
             const padding = 50;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
@@ -139,19 +141,18 @@
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            yesScale += 0.3;
+            // Grow Yes Button
+            yesScale += 0.35;
             yesBtn.style.transform = `scale(${yesScale})`;
-
-            noClicks++;
-            const phrases = ["No", "Rude", "Try again", "Nope!", "Wrong one", "Click Yes!"];
-            noBtn.innerText = phrases[noClicks % phrases.length];
         }
 
         function celebrate() {
+            // Hide the quiz, show the result
             document.getElementById('quiz').style.display = 'none';
-            document.getElementById('result').style.display = 'flex';
-            document.body.style.backgroundColor = '#ffb6c1';
-            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'flex';
+
+            // Confetti
             confetti({
                 particleCount: 150,
                 spread: 70,
